@@ -16,6 +16,17 @@ export function login(req: LoginRequest) {
   });
 }
 
+/** POST /api/register */
+export function register(req: any) {
+  return apiRequest<LoginResponse>("/register", {
+    method: "POST",
+    body: req,
+    mockResolver: (): LoginResponse => {
+      return { token: `mock-jwt-${Date.now()}`, user: { ...userMock, name: req.name, email: req.email } as User };
+    },
+  });
+}
+
 /** POST /api/logout */
 export function logout() {
   return apiRequest<void>("/logout", {

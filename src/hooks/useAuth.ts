@@ -26,6 +26,19 @@ export function useLogin() {
   });
 }
 
+export function useRegister() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: any) => authService.register(data),
+    onSuccess: (res) => {
+      queryClient.setQueryData(["auth", "me"], res.user);
+      navigate("/dashboard", { replace: true });
+    },
+  });
+}
+
 export function useLogout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

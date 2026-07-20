@@ -1,27 +1,54 @@
+import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Leaf } from "lucide-react";
-import { useLogin } from "@/hooks/useAuth";
+import { useLogin, useRegister } from "@/hooks/useAuth";
 import { Button } from "@/components/Buttons/Button";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(4, "Password must be at least 4 characters"),
 });
-type LoginForm = z.infer<typeof loginSchema>;
+
+const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Enter a valid email"),
+  password: z.string().min(4, "Password must be at least 4 characters"),
+  companyName: z.string().optional(),
+});
+
 
 export default function LoginPage() {
+  const [isRegister, setIsRegister] = useState(false);
   const login = useLogin();
+  const signup = useRegister();
+
   const {
-    register,
+    register: formRegister,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+    reset,
+  } = useForm<any>({
+    resolver: zodResolver(isRegister ? registerSchema : loginSchema),
+  });
 
-  function onSubmit(values: LoginForm) {
-    login.mutate(values);
+  function onSubmit(values: any) {
+    if (isRegister) {
+      signup.mutate(values);
+    } else {
+      login.mutate(values);
+    }
   }
+
+  function handleModeToggle() {
+    setIsRegister((r) => !r);
+    reset();
+  }
+
+  const isPending = login.isPending || signup.isPending;
+  const isError = isRegister ? signup.isError : login.isError;
+  const errorObj = isRegister ? signup.error : login.error;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface-sunken px-4">
@@ -37,43 +64,76 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {isRegister && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink">Full Name</label>
+              <input
+                {...formRegister("name")}
+                type="text"
+                placeholder="John Doe"
+                className="h-10 w-full rounded-lg border border-border px-3 text-sm focus:border-brand-500"
+              />
+              {errors.name && <p className="mt-1 text-xs text-risk-high">{errors.name.message as string}</p>}
+            </div>
+          )}
+
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Email</label>
             <input
-              {...register("email")}
+              {...formRegister("email")}
               type="email"
               autoComplete="email"
               placeholder="you@company.com"
               className="h-10 w-full rounded-lg border border-border px-3 text-sm focus:border-brand-500"
             />
-            {errors.email && <p className="mt-1 text-xs text-risk-high">{errors.email.message}</p>}
+            {errors.email && <p className="mt-1 text-xs text-risk-high">{errors.email.message as string}</p>}
           </div>
+
+          {isRegister && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-ink">Company Name (Optional)</label>
+              <input
+                {...formRegister("companyName")}
+                type="text"
+                placeholder="Acme Global Corp."
+                className="h-10 w-full rounded-lg border border-border px-3 text-sm focus:border-brand-500"
+              />
+              {errors.companyName && <p className="mt-1 text-xs text-risk-high">{errors.companyName.message as string}</p>}
+            </div>
+          )}
 
           <div>
             <label className="mb-1 block text-sm font-medium text-ink">Password</label>
             <input
-              {...register("password")}
+              {...formRegister("password")}
               type="password"
               autoComplete="current-password"
               placeholder="••••••••"
               className="h-10 w-full rounded-lg border border-border px-3 text-sm focus:border-brand-500"
             />
-            {errors.password && <p className="mt-1 text-xs text-risk-high">{errors.password.message}</p>}
+            {errors.password && <p className="mt-1 text-xs text-risk-high">{errors.password.message as string}</p>}
           </div>
 
-          {login.isError && (
+          {isError && (
             <p className="rounded-lg bg-risk-high-bg px-3 py-2 text-xs text-risk-high">
-              {(login.error as Error).message || "Login failed. Please try again."}
+              {(errorObj as Error).message || "Operation failed. Please try again."}
             </p>
           )}
 
-          <Button type="submit" className="w-full" isLoading={login.isPending}>
-            Sign in
+          <Button type="submit" className="w-full" isLoading={isPending}>
+            {isRegister ? "Sign up" : "Sign in"}
           </Button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-ink-faint">
-          Mock auth — any email + a password of 4+ characters will sign you in.
+        <p className="mt-6 text-center text-xs text-ink-muted">
+          {isRegister ? "Already have an account?" : "Need an account for your organization?"}{" "}
+          <button
+            type="button"
+            onClick={handleModeToggle}
+            className="font-medium text-brand-600 hover:text-brand-700"
+          >
+            {isRegister ? "Sign in" : "Sign up"}
+          </button>
         </p>
       </div>
     </div>
