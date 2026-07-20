@@ -91,13 +91,15 @@ export default function LoginPage() {
 
           {isRegister && (
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Company Name (Optional)</label>
-              <input
+              <label className="mb-1 block text-sm font-medium text-ink">Select Enterprise</label>
+              <select
                 {...formRegister("companyName")}
-                type="text"
-                placeholder="Acme Global Corp."
-                className="h-10 w-full rounded-lg border border-border px-3 text-sm focus:border-brand-500"
-              />
+                className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm focus:border-brand-500 text-ink"
+              >
+                <option value="Acme Global Corp.">Acme Global Corp.</option>
+                <option value="Acme Retail India">Acme Retail India</option>
+                <option value="Acme Manufacturing">Acme Manufacturing</option>
+              </select>
               {errors.companyName && <p className="mt-1 text-xs text-risk-high">{errors.companyName.message as string}</p>}
             </div>
           )}
