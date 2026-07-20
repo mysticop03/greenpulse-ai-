@@ -1,8 +1,8 @@
 import { getDashboardSummary } from "@/api/dashboard";
 
 export const dashboardService = {
-  async fetchSummary(signal?: AbortSignal) {
-    return getDashboardSummary(signal);
+  async fetchSummary(date?: string, signal?: AbortSignal) {
+    return getDashboardSummary(date, signal);
   },
 };
 

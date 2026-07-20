@@ -45,6 +45,7 @@ export interface DeviceListParams {
   category?: DeviceCategory | "all";
   sortBy?: keyof Device | "health" | "risk";
   sortDir?: "asc" | "desc";
+  date?: string;
 }
 
 export interface DeviceListResponse {

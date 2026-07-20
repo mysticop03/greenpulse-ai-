@@ -5,8 +5,9 @@ import ticketsMock from "@/mock/tickets.json";
 let mutableTickets = [...(ticketsMock as Ticket[])];
 
 /** GET /api/tickets */
-export function getTickets(signal?: AbortSignal) {
-  return apiRequest<Ticket[]>("/tickets", {
+export function getTickets(date?: string, signal?: AbortSignal) {
+  const query = date ? `?date=${encodeURIComponent(date)}` : "";
+  return apiRequest<Ticket[]>(`/tickets${query}`, {
     method: "GET",
     signal,
     mockResolver: () => mutableTickets,

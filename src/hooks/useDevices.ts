@@ -2,6 +2,8 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { deviceService } from "@/services/deviceService";
 import type { DeviceListParams } from "@/types";
 
+import { useUiStore } from "@/store/uiStore";
+
 export const deviceKeys = {
   all: ["devices"] as const,
   list: (params: DeviceListParams) => ["devices", "list", params] as const,
@@ -9,9 +11,11 @@ export const deviceKeys = {
 };
 
 export function useDevices(params: DeviceListParams) {
+  const selectedDate = useUiStore((s) => s.selectedDateLabel);
+  const updatedParams = { ...params, date: selectedDate };
   return useQuery({
-    queryKey: deviceKeys.list(params),
-    queryFn: ({ signal }) => deviceService.list(params, signal),
+    queryKey: deviceKeys.list(updatedParams),
+    queryFn: ({ signal }) => deviceService.list(updatedParams, signal),
     placeholderData: keepPreviousData,
   });
 }

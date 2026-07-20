@@ -53,6 +53,7 @@ export function getDevices(params: DeviceListParams, signal?: AbortSignal) {
     ...(params.category ? { category: params.category } : {}),
     ...(params.sortBy ? { sortBy: String(params.sortBy) } : {}),
     ...(params.sortDir ? { sortDir: params.sortDir } : {}),
+    ...(params.date ? { date: params.date } : {}),
   }).toString();
 
   return apiRequest<DeviceListResponse>(`/devices?${query}`, {
