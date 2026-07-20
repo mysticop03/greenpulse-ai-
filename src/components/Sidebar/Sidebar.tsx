@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Leaf, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,6 +7,7 @@ import { CompanySwitcher } from "./CompanySwitcher";
 import { UserProfileFooter } from "./UserProfileFooter";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useCurrentUser } from "@/hooks/useAuth";
+import { useUiStore } from "@/store/uiStore";
 
 const FALLBACK_USER = {
   id: "usr-guest",
@@ -19,7 +19,7 @@ const FALLBACK_USER = {
 
 export function Sidebar() {
   const { collapsed, toggle } = useSidebar();
-  const [company, setCompany] = useState("Acme Global Corp.");
+  const { selectedCompany, setSelectedCompany } = useUiStore();
   const { data: alerts } = useAlerts();
   const { data: user } = useCurrentUser();
 
@@ -40,7 +40,7 @@ export function Sidebar() {
         )}
       </div>
 
-      <CompanySwitcher collapsed={collapsed} current={company} onChange={setCompany} />
+      <CompanySwitcher collapsed={collapsed} current={selectedCompany} onChange={setSelectedCompany} />
 
       {/* Nav items */}
       <ul className="flex-1 space-y-0.5 overflow-y-auto px-2 py-2">

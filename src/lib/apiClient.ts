@@ -40,7 +40,11 @@ interface RequestOptions {
 
 function authHeaders(): Record<string, string> {
   const token = localStorage.getItem("gp_token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const company = localStorage.getItem("gp_selected_company") || "Acme Global Corp.";
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    "X-Company-Name": company,
+  };
 }
 
 export async function apiRequest<T>(

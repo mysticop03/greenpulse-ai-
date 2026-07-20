@@ -7,6 +7,9 @@ interface UiState {
 
   selectedDateLabel: string;
   setSelectedDateLabel: (label: string) => void;
+
+  selectedCompany: string;
+  setSelectedCompany: (company: string) => void;
 }
 
 /**
@@ -22,4 +25,10 @@ export const useUiStore = create<UiState>((set) => ({
 
   selectedDateLabel: "May 18, 2025",
   setSelectedDateLabel: (label) => set({ selectedDateLabel: label }),
+
+  selectedCompany: localStorage.getItem("gp_selected_company") || "Acme Global Corp.",
+  setSelectedCompany: (company) => {
+    localStorage.setItem("gp_selected_company", company);
+    set({ selectedCompany: company });
+  },
 }));
